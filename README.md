@@ -1,36 +1,53 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Cuentos ARAV
 
-## Getting Started
+Tienda de libros infantiles personalizados. Reescrita desde cero en Next.js
+(App Router) a partir de la maqueta visual generada originalmente con
+[Lovable](https://lovable.dev) (repo [`cuentos-arav`](https://github.com/Mairene-Villasmil/cuentos-arav)).
 
-First, run the development server:
+## Stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Next.js 15** (App Router, Server Actions)
+- **Prisma 6** + **PostgreSQL** (Supabase / Neon)
+- **NextAuth (Auth.js) v5** — credenciales + JWT, roles `user` / `admin`
+- **Tailwind CSS v4** + componentes propios estilo shadcn/ui (Radix UI)
+- **Zustand** para el carrito (persistido en `localStorage`)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Setup local
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Instalá dependencias:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+   ```sh
+   npm install
+   ```
 
-## Learn More
+2. Copiá `.env.example` a `.env` y completá `DATABASE_URL` con tu connection
+   string de Supabase o Neon. Generá `AUTH_SECRET` con:
 
-To learn more about Next.js, take a look at the following resources:
+   ```sh
+   npx auth secret
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3. Corré las migraciones y el seed:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+   ```sh
+   npm run db:migrate
+   npm run db:seed
+   ```
 
-## Deploy on Vercel
+   El seed crea un usuario admin (`admin@cuentosarav.com`, contraseña definida
+   en `SEED_ADMIN_PASSWORD`) y los 6 libros de ejemplo.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+4. Levantá el servidor de desarrollo:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+   ```sh
+   npm run dev
+   ```
+
+## Estructura
+
+- `src/app/(site)` — sitio público (catálogo, detalle de libro, carrito,
+  cuenta, páginas informativas).
+- `src/app/admin` — panel de administración (protegido por rol `admin`).
+- `src/actions` — Server Actions (auth, pedidos, contacto, admin).
+- `prisma/schema.prisma` — modelo de datos.
+- `prisma/seed.ts` — datos de ejemplo.

@@ -1,0 +1,121 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  user
+  admin
+}
+
+enum PaymentStatus {
+  pending_payment
+  under_review
+  paid
+  rejected
+}
+
+enum OrderItemType {
+  standard
+  custom
+}
+
+enum CustomRequestStatus {
+  nuevo
+  en_charla
+  aprobado
+  en_produccion
+  listo
+  enviado
+  cerrado
+}
+
+model User {
+  id            String          @id @default(cuid())
+  email         String          @unique
+  passwordHash  String
+  name          String?
+  role          Role            @default(user)
+  createdAt     DateTime        @default(now())
+  orders        Order[]
+  customRequests CustomRequest[]
+}
+
+model Book {
+  id                    String    @id @default(cuid())
+  title                 String
+  slug                  String    @unique
+  description           String
+  collection            String?
+  ageRange              String?
+  standardEnabled       Boolean   @default(false)
+  standardPrice         Int?
+  customEnabled         Boolean   @default(false)
+  customDepositOverride Int?
+  coverImage            String
+  previewImages         String[]
+  isNew                 Boolean   @default(false)
+  isSpecialEdition      Boolean   @default(false)
+  createdAt             DateTime  @default(now())
+  orderItems            OrderItem[]
+  customRequests        CustomRequest[]
+}
+
+model Order {
+  id              String        @id @default(cuid())
+  userId          String
+  user            User          @relation(fields: [userId], references: [id])
+  items           OrderItem[]
+  total           Int
+  paymentStatus   PaymentStatus @default(pending_payment)
+  mercadoPagoId   String?
+  proofImage      String?
+  createdAt       DateTime      @default(now())
+  customRequests  CustomRequest[]
+}
+
+model OrderItem {
+  id                 String        @id @default(cuid())
+  orderId            String
+  order              Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  bookId             String
+  book               Book          @relation(fields: [bookId], references: [id])
+  type               OrderItemType
+  quantity           Int
+  unitPriceSnapshot  Int
+  customDraft        String?
+}
+
+model CustomRequest {
+  id             String              @id @default(cuid())
+  orderId        String
+  order          Order               @relation(fields: [orderId], references: [id])
+  bookId         String
+  book           Book                @relation(fields: [bookId], references: [id])
+  userId         String
+  user           User                @relation(fields: [userId], references: [id])
+  depositPaid    Int
+  personalization String
+  status         CustomRequestStatus @default(nuevo)
+  etaMin         DateTime?
+  etaMax         DateTime?
+  createdAt      DateTime            @default(now())
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  message   String
+  createdAt DateTime @default(now())
+}
+
+model StoreSettings {
+  id                   String  @id @default(cuid())
+  customDepositDefault Int     @default(5000)
+  supportEmail         String
+}
