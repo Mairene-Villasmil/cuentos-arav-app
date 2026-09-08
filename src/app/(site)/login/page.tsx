@@ -45,7 +45,12 @@ function LoginForm() {
           <Input id="email" name="email" type="email" required className="mt-1" />
         </div>
         <div>
-          <Label htmlFor="password">Contraseña</Label>
+          <div className="flex items-center justify-between">
+            <Label htmlFor="password">Contraseña</Label>
+            <Link href="/recuperar-contrasena" className="text-xs text-primary hover:underline">
+              ¿Olvidaste tu contraseña?
+            </Link>
+          </div>
           <Input id="password" name="password" type="password" required className="mt-1" />
         </div>
         {error && <p className="text-sm text-destructive">{error}</p>}

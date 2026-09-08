@@ -12,7 +12,7 @@ async function requireAdmin() {
   return session;
 }
 
-export async function createBook(data: {
+export type BookFormInput = {
   title: string;
   slug: string;
   description: string;
@@ -24,17 +24,39 @@ export async function createBook(data: {
   customDepositOverride?: number;
   isNew: boolean;
   isSpecialEdition: boolean;
-}) {
+  coverImage?: string;
+  previewImages?: string[];
+};
+
+export async function createBook(data: BookFormInput) {
   await requireAdmin();
   await prisma.book.create({
     data: {
       ...data,
-      coverImage: "/book-placeholder.svg",
-      previewImages: ["/book-placeholder.svg"],
+      coverImage: data.coverImage || "/book-placeholder.svg",
+      previewImages: data.previewImages?.length ? data.previewImages : ["/book-placeholder.svg"],
     },
   });
   revalidatePath("/admin/libros");
   revalidatePath("/libros");
+}
+
+export async function updateBook(id: string, data: BookFormInput) {
+  await requireAdmin();
+  const book = await prisma.book.findUnique({ where: { id } });
+  if (!book) throw new Error("Libro no encontrado");
+
+  await prisma.book.update({
+    where: { id },
+    data: {
+      ...data,
+      coverImage: data.coverImage || book.coverImage,
+      previewImages: data.previewImages?.length ? data.previewImages : book.previewImages,
+    },
+  });
+  revalidatePath("/admin/libros");
+  revalidatePath("/libros");
+  revalidatePath(`/libros/${data.slug}`);
 }
 
 export async function deleteBook(id: string) {

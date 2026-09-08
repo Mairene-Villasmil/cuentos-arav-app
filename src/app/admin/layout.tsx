@@ -1,16 +1,10 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
+import { prisma } from "@/lib/prisma";
 import { logout } from "@/actions/session";
 import { Button } from "@/components/ui/button";
-
-const links = [
-  { href: "/admin", label: "Panel" },
-  { href: "/admin/libros", label: "Libros" },
-  { href: "/admin/pedidos", label: "Pedidos" },
-  { href: "/admin/solicitudes", label: "Personalizaciones" },
-  { href: "/admin/configuracion", label: "Configuración" },
-];
+import { Badge } from "@/components/ui/badge";
 
 export default async function AdminLayout({
   children,
@@ -20,6 +14,19 @@ export default async function AdminLayout({
   const session = await auth();
   if (!session?.user) redirect("/login?redirect=/admin");
   if (session.user.role !== "admin") redirect("/");
+
+  const [pendingOrders, openRequests] = await Promise.all([
+    prisma.order.count({ where: { paymentStatus: { in: ["pending_payment", "under_review"] } } }),
+    prisma.customRequest.count({ where: { status: { notIn: ["cerrado", "enviado"] } } }),
+  ]);
+
+  const links = [
+    { href: "/admin", label: "Panel" },
+    { href: "/admin/libros", label: "Libros" },
+    { href: "/admin/pedidos", label: "Pedidos", count: pendingOrders },
+    { href: "/admin/solicitudes", label: "Personalizaciones", count: openRequests },
+    { href: "/admin/configuracion", label: "Configuración" },
+  ];
 
   return (
     <div className="flex min-h-screen">
@@ -33,9 +40,14 @@ export default async function AdminLayout({
             <Link
               key={link.href}
               href={link.href}
-              className="rounded-xl px-3 py-2 text-sm font-medium text-foreground/80 hover:bg-background hover:text-primary"
+              className="flex items-center justify-between rounded-xl px-3 py-2 text-sm font-medium text-foreground/80 hover:bg-background hover:text-primary"
             >
               {link.label}
+              {!!link.count && (
+                <Badge className="bg-primary text-primary-foreground hover:bg-primary">
+                  {link.count}
+                </Badge>
+              )}
             </Link>
           ))}
         </nav>

@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { formatPrice } from "@/lib/format";
 import { PAYMENT_STATUS_LABELS, CUSTOM_STATUS_LABELS } from "@/lib/labels";
 import { logout } from "@/actions/session";
+import { ChangePasswordForm } from "@/components/site/change-password-form";
 
 export default async function MyAccountPage() {
   const session = await auth();
@@ -95,6 +96,13 @@ export default async function MyAccountPage() {
             ))}
           </div>
         )}
+      </section>
+
+      <section className="mt-10">
+        <h2 className="font-heading text-xl font-semibold">Cambiar contraseña</h2>
+        <div className="mt-4">
+          <ChangePasswordForm />
+        </div>
       </section>
     </div>
   );

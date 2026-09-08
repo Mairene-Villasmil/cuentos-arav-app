@@ -1,6 +1,7 @@
+import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { formatPrice } from "@/lib/format";
-import { CreateBookForm } from "@/components/admin/create-book-form";
+import { BookForm } from "@/components/admin/book-form";
 import { deleteBook } from "@/actions/admin";
 import { Button } from "@/components/ui/button";
 
@@ -12,7 +13,7 @@ export default async function AdminBooksPage() {
       <h1 className="font-heading text-2xl font-semibold sm:text-3xl">Libros</h1>
 
       <div className="mt-6">
-        <CreateBookForm />
+        <BookForm />
       </div>
 
       <div className="mt-8 space-y-3">
@@ -30,16 +31,21 @@ export default async function AdminBooksPage() {
                   : "Sin precio estándar"}
               </p>
             </div>
-            <form
-              action={async () => {
-                "use server";
-                await deleteBook(book.id);
-              }}
-            >
-              <Button type="submit" variant="ghost" size="sm" className="text-destructive">
-                Eliminar
+            <div className="flex items-center gap-1">
+              <Button asChild variant="ghost" size="sm">
+                <Link href={`/admin/libros/${book.id}`}>Editar</Link>
               </Button>
-            </form>
+              <form
+                action={async () => {
+                  "use server";
+                  await deleteBook(book.id);
+                }}
+              >
+                <Button type="submit" variant="ghost" size="sm" className="text-destructive">
+                  Eliminar
+                </Button>
+              </form>
+            </div>
           </div>
         ))}
       </div>

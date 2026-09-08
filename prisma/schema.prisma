@@ -43,6 +43,7 @@ model User {
   createdAt     DateTime        @default(now())
   orders        Order[]
   customRequests CustomRequest[]
+  resetTokens   PasswordResetToken[]
 }
 
 model Book {
@@ -104,6 +105,16 @@ model CustomRequest {
   etaMin         DateTime?
   etaMax         DateTime?
   createdAt      DateTime            @default(now())
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
 }
 
 model ContactMessage {

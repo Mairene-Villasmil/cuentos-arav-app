@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
+import { sendOrderNotificationToAdmin, sendOrderConfirmationToCustomer } from "@/lib/email";
 
 type CartItemInput = {
   bookId: string;
@@ -36,6 +37,7 @@ export async function createOrder(items: CartItemInput[]) {
         })),
       },
     },
+    include: { items: { include: { book: true } } },
   });
 
   const customItems = items.filter((i) => i.type === "custom");
@@ -50,6 +52,32 @@ export async function createOrder(items: CartItemInput[]) {
       })),
     });
   }
+
+  const settings = await prisma.storeSettings.findFirst();
+  const customerEmail = session.user.email ?? "";
+
+  await Promise.all([
+    settings?.supportEmail
+      ? sendOrderNotificationToAdmin({
+          adminEmail: settings.supportEmail,
+          orderId: order.id,
+          customerEmail,
+          total: order.total,
+          items: order.items.map((i) => ({
+            title: i.book.title,
+            quantity: i.quantity,
+            type: i.type,
+          })),
+        })
+      : Promise.resolve(),
+    customerEmail
+      ? sendOrderConfirmationToCustomer({
+          customerEmail,
+          orderId: order.id,
+          total: order.total,
+        })
+      : Promise.resolve(),
+  ]);
 
   return { success: true, orderId: order.id };
 }
