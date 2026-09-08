@@ -1,4 +1,10 @@
+import type { Metadata } from "next";
 import { Sparkles, Palette, MessageCircle, Truck } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "Cómo funciona — Cuentos ARAV",
+  description: "Desde elegir el cuento hasta recibirlo en tu casa: así es el camino de una compra en Cuentos ARAV.",
+};
 
 const steps = [
   {

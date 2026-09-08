@@ -1,7 +1,13 @@
+import type { Metadata } from "next";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { BookCard } from "@/components/site/book-card";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Colecciones — Cuentos ARAV",
+  description: "Historias agrupadas por tema, para encontrar la aventura perfecta según los intereses de cada niño.",
+};
 
 export default async function CollectionsPage({
   searchParams,

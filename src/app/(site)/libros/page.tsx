@@ -1,15 +1,22 @@
+import type { Metadata } from "next";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import type { Prisma } from "@prisma/client";
 import { BookCard } from "@/components/site/book-card";
 import { CatalogFilters } from "@/components/site/catalog-filters";
 
+export const metadata: Metadata = {
+  title: "Catálogo de libros — Cuentos ARAV",
+  description:
+    "Libros infantiles ilustrados en acuarela, estándar o personalizados con el nombre de tu hijo. Filtrá por colección, edad y tipo.",
+};
+
 export default async function CatalogPage({
   searchParams,
 }: {
-  searchParams: Promise<{ coleccion?: string; edad?: string; tipo?: string }>;
+  searchParams: Promise<{ coleccion?: string; edad?: string; tipo?: string; q?: string }>;
 }) {
-  const { coleccion, edad, tipo } = await searchParams;
+  const { coleccion, edad, tipo, q } = await searchParams;
   const session = await auth();
   const isAdmin = session?.user.role === "admin";
 
@@ -18,6 +25,7 @@ export default async function CatalogPage({
   if (edad) where.ageRange = edad;
   if (tipo === "standard") where.standardEnabled = true;
   if (tipo === "custom") where.customEnabled = true;
+  if (q) where.title = { contains: q, mode: "insensitive" };
 
   const [books, collectionRows, ageRows] = await Promise.all([
     prisma.book.findMany({ where, orderBy: { createdAt: "desc" } }),
@@ -46,7 +54,7 @@ export default async function CatalogPage({
       <div className="mb-8">
         <CatalogFilters
           action="/libros"
-          current={{ collection: coleccion, ageRange: edad, type: tipo }}
+          current={{ collection: coleccion, ageRange: edad, type: tipo, query: q }}
           collections={collectionRows
             .map((c) => c.collection)
             .filter((c): c is string => Boolean(c))}

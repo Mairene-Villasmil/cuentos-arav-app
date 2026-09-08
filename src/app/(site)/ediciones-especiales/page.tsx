@@ -1,6 +1,12 @@
+import type { Metadata } from "next";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { BookCard } from "@/components/site/book-card";
+
+export const metadata: Metadata = {
+  title: "Ediciones especiales — Cuentos ARAV",
+  description: "Tiradas limitadas con ilustraciones exclusivas y materiales premium, perfectas para regalar.",
+};
 
 export default async function SpecialEditionsPage() {
   const session = await auth();

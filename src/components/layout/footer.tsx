@@ -28,6 +28,7 @@ export function Footer() {
           <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
             <li><Link href="/como-funciona" className="hover:text-primary">Cómo funciona</Link></li>
             <li><Link href="/como-personalizar" className="hover:text-primary">Cómo personalizar</Link></li>
+            <li><Link href="/envios-y-cambios" className="hover:text-primary">Envíos y cambios</Link></li>
             <li><Link href="/contacto" className="hover:text-primary">Contacto</Link></li>
           </ul>
         </div>
@@ -37,6 +38,8 @@ export function Footer() {
           <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
             <li><Link href="/sobre-nosotros" className="hover:text-primary">Sobre nosotros</Link></li>
             <li><Link href="/mi-cuenta" className="hover:text-primary">Mi cuenta</Link></li>
+            <li><Link href="/terminos-y-condiciones" className="hover:text-primary">Términos y condiciones</Link></li>
+            <li><Link href="/privacidad" className="hover:text-primary">Privacidad</Link></li>
           </ul>
         </div>
       </div>

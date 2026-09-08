@@ -1,4 +1,10 @@
+import type { Metadata } from "next";
 import { ContactForm } from "@/components/site/contact-form";
+
+export const metadata: Metadata = {
+  title: "Contacto — Cuentos ARAV",
+  description: "Escribinos por acá o por WhatsApp para consultas o pedidos personalizados.",
+};
 
 export default function ContactPage() {
   return (

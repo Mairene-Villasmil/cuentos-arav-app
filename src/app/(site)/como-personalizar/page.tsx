@@ -1,5 +1,11 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+
+export const metadata: Metadata = {
+  title: "Cómo personalizar — Cuentos ARAV",
+  description: "Qué se puede personalizar en cada libro y cómo es el proceso, paso a paso.",
+};
 
 export default function HowToCustomizePage() {
   return (

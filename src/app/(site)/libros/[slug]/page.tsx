@@ -1,10 +1,31 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { Badge } from "@/components/ui/badge";
 import { AddToCartForm } from "@/components/site/add-to-cart-form";
 import { EditBookInlineButton } from "@/components/admin/edit-book-inline-button";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const book = await prisma.book.findUnique({ where: { slug } });
+  if (!book) return {};
+
+  return {
+    title: `${book.title} — Cuentos ARAV`,
+    description: book.description,
+    openGraph: {
+      title: book.title,
+      description: book.description,
+      images: [book.coverImage],
+    },
+  };
+}
 
 export default async function BookDetailPage({
   params,
