@@ -2,7 +2,7 @@
 
 import { randomUUID } from "crypto";
 import { auth } from "@/auth";
-import { supabaseAdmin, UPLOADS_BUCKET } from "@/lib/supabase-admin";
+import { getSupabaseAdmin, UPLOADS_BUCKET } from "@/lib/supabase-admin";
 
 const MAX_SIZE = 5 * 1024 * 1024;
 const ALLOWED_TYPES = ["image/png", "image/jpeg", "image/webp", "image/gif"];
@@ -25,7 +25,15 @@ export async function uploadImage(formData: FormData) {
   const ext = file.name.split(".").pop() || "jpg";
   const path = `${session.user.id}/${randomUUID()}.${ext}`;
 
-  const { error } = await supabaseAdmin.storage
+  let admin;
+  try {
+    admin = getSupabaseAdmin();
+  } catch (e) {
+    console.error(e);
+    return { error: "La subida de imágenes no está configurada todavía." };
+  }
+
+  const { error } = await admin.storage
     .from(UPLOADS_BUCKET)
     .upload(path, file, { contentType: file.type });
 
@@ -34,7 +42,7 @@ export async function uploadImage(formData: FormData) {
     return { error: "No se pudo subir la imagen. Intentá de nuevo." };
   }
 
-  const { data } = supabaseAdmin.storage.from(UPLOADS_BUCKET).getPublicUrl(path);
+  const { data } = admin.storage.from(UPLOADS_BUCKET).getPublicUrl(path);
 
   return { success: true, url: data.publicUrl };
 }

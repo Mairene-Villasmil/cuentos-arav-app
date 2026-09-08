@@ -1,6 +1,7 @@
-import { supabaseAdmin, UPLOADS_BUCKET } from "../src/lib/supabase-admin";
+import { getSupabaseAdmin, UPLOADS_BUCKET } from "../src/lib/supabase-admin";
 
 async function main() {
+  const supabaseAdmin = getSupabaseAdmin();
   const { data: buckets, error: listError } = await supabaseAdmin.storage.listBuckets();
   if (listError) throw listError;
 
