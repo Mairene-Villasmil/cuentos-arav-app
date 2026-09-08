@@ -74,6 +74,7 @@ model Order {
   total           Int
   paymentStatus   PaymentStatus @default(pending_payment)
   mercadoPagoId   String?
+  preferenceId    String?
   proofImage      String?
   createdAt       DateTime      @default(now())
   customRequests  CustomRequest[]

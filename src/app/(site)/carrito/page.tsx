@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { useCartStore } from "@/lib/cart-store";
 import { formatPrice } from "@/lib/format";
 import { createOrder } from "@/actions/orders";
+import { createPaymentLink } from "@/actions/payment";
 
 export default function CartPage() {
   const [hydrated, setHydrated] = useState(false);
@@ -33,9 +34,9 @@ export default function CartPage() {
         referenceImages: i.referenceImages,
       }))
     );
-    setSubmitting(false);
 
-    if (result.error) {
+    if ("error" in result) {
+      setSubmitting(false);
       toast.error(result.error);
       if (result.error.includes("iniciar sesión")) {
         router.push("/login?redirect=/carrito");
@@ -43,9 +44,17 @@ export default function CartPage() {
       return;
     }
 
+    const paymentLink = await createPaymentLink(result.orderId);
+    setSubmitting(false);
     clear();
-    toast.success("¡Pedido confirmado!");
-    router.push("/mi-cuenta");
+
+    if (paymentLink.success && paymentLink.url) {
+      window.location.href = paymentLink.url;
+      return;
+    }
+
+    toast.success("¡Pedido confirmado! Te contactamos por WhatsApp para coordinar el pago.");
+    router.push(`/pedido/${result.orderId}`);
   }
 
   if (!hydrated) return null;

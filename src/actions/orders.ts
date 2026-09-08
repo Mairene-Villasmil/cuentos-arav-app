@@ -13,7 +13,9 @@ type CartItemInput = {
   referenceImages?: string[];
 };
 
-export async function createOrder(items: CartItemInput[]) {
+export async function createOrder(
+  items: CartItemInput[]
+): Promise<{ error: string } | { success: true; orderId: string }> {
   const session = await auth();
   if (!session?.user) {
     return { error: "Necesitás iniciar sesión para completar el pedido." };
