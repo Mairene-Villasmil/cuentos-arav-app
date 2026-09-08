@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
-import { Menu, X, ShoppingBag, User } from "lucide-react";
+import { Menu, X, ShoppingBag, User, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCartStore } from "@/lib/cart-store";
 import { Session } from "next-auth";
@@ -47,6 +47,19 @@ export function Navbar({ session }: { session: Session | null }) {
         </nav>
 
         <div className="flex items-center gap-2">
+          {session?.user.role === "admin" && (
+            <Button
+              variant="ghost"
+              size="icon"
+              asChild
+              className="rounded-full text-primary"
+              title="Panel admin"
+            >
+              <Link href="/admin" aria-label="Panel admin">
+                <LayoutDashboard className="size-5" />
+              </Link>
+            </Button>
+          )}
           <Button variant="ghost" size="icon" asChild className="relative rounded-full">
             <Link href="/carrito" aria-label="Carrito">
               <ShoppingBag className="size-5" />
@@ -86,6 +99,15 @@ export function Navbar({ session }: { session: Session | null }) {
               {link.label}
             </Link>
           ))}
+          {session?.user.role === "admin" && (
+            <Link
+              href="/admin"
+              onClick={() => setOpen(false)}
+              className="rounded-xl px-3 py-2 text-sm font-medium text-primary hover:bg-muted"
+            >
+              Panel admin
+            </Link>
+          )}
         </nav>
       )}
     </header>

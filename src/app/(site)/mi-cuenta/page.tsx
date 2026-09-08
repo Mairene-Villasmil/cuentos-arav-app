@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
@@ -32,11 +33,18 @@ export default async function MyAccountPage() {
           <h1 className="font-heading text-3xl font-semibold sm:text-4xl">Mi cuenta</h1>
           <p className="mt-1 text-muted-foreground">{session.user.email}</p>
         </div>
-        <form action={logout}>
-          <Button type="submit" variant="outline" className="rounded-full">
-            Cerrar sesión
-          </Button>
-        </form>
+        <div className="flex items-center gap-2">
+          {session.user.role === "admin" && (
+            <Button asChild className="rounded-full">
+              <Link href="/admin">Panel admin</Link>
+            </Button>
+          )}
+          <form action={logout}>
+            <Button type="submit" variant="outline" className="rounded-full">
+              Cerrar sesión
+            </Button>
+          </form>
+        </div>
       </div>
 
       <section className="mt-10">
