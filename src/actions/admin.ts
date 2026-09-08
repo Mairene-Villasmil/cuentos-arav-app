@@ -94,6 +94,35 @@ export async function updateCustomRequestStatus(
   revalidatePath("/admin/solicitudes");
 }
 
+export async function deleteUser(id: string) {
+  const session = await requireAdmin();
+
+  if (session?.user.id === id) {
+    return { error: "No podés eliminar tu propia cuenta desde acá." };
+  }
+
+  const target = await prisma.user.findUnique({ where: { id } });
+  if (!target) return { error: "Usuario no encontrado." };
+
+  if (target.role === "admin") {
+    const adminCount = await prisma.user.count({ where: { role: "admin" } });
+    if (adminCount <= 1) {
+      return { error: "No podés eliminar al único usuario admin." };
+    }
+  }
+
+  try {
+    await prisma.user.delete({ where: { id } });
+  } catch {
+    return {
+      error: "No se puede eliminar: este usuario tiene pedidos o personalizaciones registradas.",
+    };
+  }
+
+  revalidatePath("/admin/usuarios");
+  return { success: true };
+}
+
 export async function updateStoreSettings(data: {
   id: string;
   customDepositDefault: number;

@@ -25,6 +25,7 @@ export default async function AdminLayout({
     { href: "/admin/libros", label: "Libros" },
     { href: "/admin/pedidos", label: "Pedidos", count: pendingOrders },
     { href: "/admin/solicitudes", label: "Personalizaciones", count: openRequests },
+    { href: "/admin/usuarios", label: "Usuarios" },
     { href: "/admin/configuracion", label: "Configuración" },
   ];
 
