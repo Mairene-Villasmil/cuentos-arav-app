@@ -44,6 +44,7 @@ model User {
   orders        Order[]
   customRequests CustomRequest[]
   resetTokens   PasswordResetToken[]
+  favorites     Favorite[]
 }
 
 model Book {
@@ -61,9 +62,22 @@ model Book {
   previewImages         String[]
   isNew                 Boolean   @default(false)
   isSpecialEdition      Boolean   @default(false)
+  isFeatured            Boolean   @default(false)
   createdAt             DateTime  @default(now())
   orderItems            OrderItem[]
   customRequests        CustomRequest[]
+  favorites             Favorite[]
+}
+
+model Favorite {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bookId    String
+  book      Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, bookId])
 }
 
 model Order {

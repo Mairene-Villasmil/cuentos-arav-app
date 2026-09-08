@@ -69,6 +69,7 @@ export function BookForm({ book, onSaved }: { book?: Book; onSaved?: () => void 
         : undefined,
       isNew: formData.get("isNew") === "on",
       isSpecialEdition: formData.get("isSpecialEdition") === "on",
+      isFeatured: formData.get("isFeatured") === "on",
       coverImage: String(formData.get("coverImage") ?? "") || undefined,
       previewImages,
     };
@@ -169,6 +170,9 @@ export function BookForm({ book, onSaved }: { book?: Book; onSaved?: () => void 
         </label>
         <label className="flex items-center gap-2 text-sm">
           <input type="checkbox" name="isSpecialEdition" defaultChecked={book?.isSpecialEdition} /> Edición especial
+        </label>
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" name="isFeatured" defaultChecked={book?.isFeatured} /> Destacado (home)
         </label>
       </div>
 

@@ -4,14 +4,26 @@ import type { Book } from "@prisma/client";
 import { Badge } from "@/components/ui/badge";
 import { formatPrice } from "@/lib/format";
 import { BookCardEditButton } from "@/components/admin/book-card-edit-button";
+import { FavoriteButton } from "@/components/site/favorite-button";
 
-export function BookCard({ book, isAdmin = false }: { book: Book; isAdmin?: boolean }) {
+export function BookCard({
+  book,
+  isAdmin = false,
+  isFavorited = false,
+}: {
+  book: Book;
+  isAdmin?: boolean;
+  isFavorited?: boolean;
+}) {
   return (
     <Link
       href={`/libros/${book.slug}`}
       className="group relative flex flex-col overflow-hidden rounded-3xl border border-border/70 bg-card shadow-sm transition-shadow hover:shadow-lg"
     >
-      {isAdmin && <BookCardEditButton book={book} />}
+      <div className="absolute right-3 top-3 z-10 flex gap-2">
+        <FavoriteButton bookId={book.id} initialFavorited={isFavorited} />
+        {isAdmin && <BookCardEditButton book={book} />}
+      </div>
       <div className="relative aspect-[4/5] w-full overflow-hidden bg-muted">
         <Image
           src={book.coverImage}

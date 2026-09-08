@@ -6,6 +6,8 @@ import { prisma } from "@/lib/prisma";
 import { Badge } from "@/components/ui/badge";
 import { AddToCartForm } from "@/components/site/add-to-cart-form";
 import { EditBookInlineButton } from "@/components/admin/edit-book-inline-button";
+import { FavoriteButton } from "@/components/site/favorite-button";
+import { getFavoritedBookIds } from "@/lib/favorites";
 
 export async function generateMetadata({
   params,
@@ -38,12 +40,17 @@ export default async function BookDetailPage({
 
   if (!book) notFound();
 
+  const favoritedIds = await getFavoritedBookIds(session?.user.id);
+
   return (
     <div className="mx-auto max-w-6xl px-4 py-12">
       <div className="grid gap-10 lg:grid-cols-2">
         <div>
           <div className="relative aspect-[4/5] overflow-hidden rounded-3xl bg-muted shadow-sm">
             <Image src={book.coverImage} alt={book.title} fill className="object-cover" />
+            <div className="absolute right-3 top-3 z-10">
+              <FavoriteButton bookId={book.id} initialFavorited={favoritedIds.has(book.id)} />
+            </div>
           </div>
 
           {book.previewImages.length > 0 && (

@@ -24,7 +24,7 @@ export function BookCardEditButton({ book }: { book: Book }) {
           setOpen(true);
         }}
         aria-label={`Editar ${book.title}`}
-        className="absolute right-3 top-3 z-10 flex size-8 items-center justify-center rounded-full bg-background/90 text-foreground shadow-sm transition-colors hover:bg-primary hover:text-primary-foreground"
+        className="flex size-8 items-center justify-center rounded-full bg-background/90 text-foreground shadow-sm transition-colors hover:bg-primary hover:text-primary-foreground"
       >
         <Pencil className="size-3.5" />
       </button>

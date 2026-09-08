@@ -30,6 +30,7 @@ export type BookFormInput = {
   customDepositOverride?: number;
   isNew: boolean;
   isSpecialEdition: boolean;
+  isFeatured: boolean;
   coverImage?: string;
   previewImages?: string[];
 };

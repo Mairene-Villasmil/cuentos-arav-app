@@ -8,6 +8,7 @@ import { formatPrice } from "@/lib/format";
 import { PAYMENT_STATUS_LABELS, CUSTOM_STATUS_LABELS } from "@/lib/labels";
 import { logout } from "@/actions/session";
 import { ChangePasswordForm } from "@/components/site/change-password-form";
+import { BookCard } from "@/components/site/book-card";
 
 export default async function MyAccountPage() {
   const session = await auth();
@@ -15,8 +16,8 @@ export default async function MyAccountPage() {
 
   const isAdmin = session.user.role === "admin";
 
-  const [orders, customRequests] = isAdmin
-    ? [[], []]
+  const [orders, customRequests, favorites] = isAdmin
+    ? [[], [], []]
     : await Promise.all([
         prisma.order.findMany({
           where: { userId: session.user.id },
@@ -24,6 +25,11 @@ export default async function MyAccountPage() {
           orderBy: { createdAt: "desc" },
         }),
         prisma.customRequest.findMany({
+          where: { userId: session.user.id },
+          include: { book: true },
+          orderBy: { createdAt: "desc" },
+        }),
+        prisma.favorite.findMany({
           where: { userId: session.user.id },
           include: { book: true },
           orderBy: { createdAt: "desc" },
@@ -116,6 +122,21 @@ export default async function MyAccountPage() {
                     </div>
                     <p className="mt-2 text-sm text-muted-foreground">{req.personalization}</p>
                   </div>
+                ))}
+              </div>
+            )}
+          </section>
+
+          <section className="mt-10">
+            <h2 className="font-heading text-xl font-semibold">Tus favoritos</h2>
+            {favorites.length === 0 ? (
+              <p className="mt-3 text-sm text-muted-foreground">
+                Todavía no marcaste ningún libro como favorito.
+              </p>
+            ) : (
+              <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+                {favorites.map((fav) => (
+                  <BookCard key={fav.id} book={fav.book} isFavorited />
                 ))}
               </div>
             )}

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { BookCard } from "@/components/site/book-card";
+import { getFavoritedBookIds } from "@/lib/favorites";
 import Link from "next/link";
 
 export const metadata: Metadata = {
@@ -23,6 +24,7 @@ export default async function CollectionsPage({
       where: { collection: nombre },
       orderBy: { createdAt: "desc" },
     });
+    const favoritedIds = await getFavoritedBookIds(session?.user.id);
 
     return (
       <div className="mx-auto max-w-6xl px-4 py-12">
@@ -32,7 +34,12 @@ export default async function CollectionsPage({
         <h1 className="mt-3 font-heading text-3xl font-semibold sm:text-4xl">{nombre}</h1>
         <div className="mt-8 grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
           {books.map((book) => (
-            <BookCard key={book.id} book={book} isAdmin={isAdmin} />
+            <BookCard
+              key={book.id}
+              book={book}
+              isAdmin={isAdmin}
+              isFavorited={favoritedIds.has(book.id)}
+            />
           ))}
         </div>
       </div>

@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import type { Prisma } from "@prisma/client";
 import { BookCard } from "@/components/site/book-card";
 import { CatalogFilters } from "@/components/site/catalog-filters";
+import { getFavoritedBookIds } from "@/lib/favorites";
 
 export const metadata: Metadata = {
   title: "Catálogo de libros — Cuentos ARAV",
@@ -40,6 +41,7 @@ export default async function CatalogPage({
       select: { ageRange: true },
     }),
   ]);
+  const favoritedIds = await getFavoritedBookIds(session?.user.id);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12">
@@ -71,7 +73,12 @@ export default async function CatalogPage({
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
           {books.map((book) => (
-            <BookCard key={book.id} book={book} isAdmin={isAdmin} />
+            <BookCard
+              key={book.id}
+              book={book}
+              isAdmin={isAdmin}
+              isFavorited={favoritedIds.has(book.id)}
+            />
           ))}
         </div>
       )}
