@@ -20,9 +20,6 @@ export default async function HomePage() {
         <div className="absolute -left-24 -top-24 size-72 rounded-full bg-celeste/50 blur-3xl" />
         <div className="absolute -right-16 top-40 size-64 rounded-full bg-menta/50 blur-3xl" />
         <div className="relative mx-auto flex max-w-6xl flex-col items-center gap-6 px-4 py-20 text-center sm:py-28">
-          <span className="rounded-full bg-amarillo/60 px-4 py-1 text-xs font-semibold uppercase tracking-wide text-foreground">
-            Ilustrados en acuarela, hechos a mano
-          </span>
           <h1 className="max-w-2xl font-heading text-4xl font-semibold leading-tight text-foreground sm:text-5xl">
             Cuentos donde tu hijo es el{" "}
             <span className="italic text-primary">protagonista</span>
