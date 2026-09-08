@@ -1,8 +1,10 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { Badge } from "@/components/ui/badge";
 import { AddToCartForm } from "@/components/site/add-to-cart-form";
+import { EditBookInlineButton } from "@/components/admin/edit-book-inline-button";
 
 export default async function BookDetailPage({
   params,
@@ -10,6 +12,7 @@ export default async function BookDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  const session = await auth();
   const book = await prisma.book.findUnique({ where: { slug } });
 
   if (!book) notFound();
@@ -42,12 +45,15 @@ export default async function BookDetailPage({
         </div>
 
         <div>
-          <div className="flex flex-wrap gap-2">
-            {book.isNew && <Badge className="bg-amarillo text-foreground hover:bg-amarillo">Nuevo</Badge>}
-            {book.isSpecialEdition && (
-              <Badge className="bg-menta text-accent-foreground hover:bg-menta">Edición especial</Badge>
-            )}
-            {book.collection && <Badge variant="outline">{book.collection}</Badge>}
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex flex-wrap gap-2">
+              {book.isNew && <Badge className="bg-amarillo text-foreground hover:bg-amarillo">Nuevo</Badge>}
+              {book.isSpecialEdition && (
+                <Badge className="bg-menta text-accent-foreground hover:bg-menta">Edición especial</Badge>
+              )}
+              {book.collection && <Badge variant="outline">{book.collection}</Badge>}
+            </div>
+            {session?.user.role === "admin" && <EditBookInlineButton book={book} />}
           </div>
 
           <h1 className="mt-3 font-heading text-3xl font-semibold sm:text-4xl">

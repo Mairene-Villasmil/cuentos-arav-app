@@ -3,13 +3,15 @@ import Image from "next/image";
 import type { Book } from "@prisma/client";
 import { Badge } from "@/components/ui/badge";
 import { formatPrice } from "@/lib/format";
+import { BookCardEditButton } from "@/components/admin/book-card-edit-button";
 
-export function BookCard({ book }: { book: Book }) {
+export function BookCard({ book, isAdmin = false }: { book: Book; isAdmin?: boolean }) {
   return (
     <Link
       href={`/libros/${book.slug}`}
-      className="group flex flex-col overflow-hidden rounded-3xl border border-border/70 bg-card shadow-sm transition-shadow hover:shadow-lg"
+      className="group relative flex flex-col overflow-hidden rounded-3xl border border-border/70 bg-card shadow-sm transition-shadow hover:shadow-lg"
     >
+      {isAdmin && <BookCardEditButton book={book} />}
       <div className="relative aspect-[4/5] w-full overflow-hidden bg-muted">
         <Image
           src={book.coverImage}

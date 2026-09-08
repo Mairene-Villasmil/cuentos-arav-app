@@ -1,7 +1,11 @@
+import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { BookCard } from "@/components/site/book-card";
 
 export default async function SpecialEditionsPage() {
+  const session = await auth();
+  const isAdmin = session?.user.role === "admin";
+
   const books = await prisma.book.findMany({
     where: { isSpecialEdition: true },
     orderBy: { createdAt: "desc" },
@@ -22,7 +26,7 @@ export default async function SpecialEditionsPage() {
       ) : (
         <div className="mt-8 grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
           {books.map((book) => (
-            <BookCard key={book.id} book={book} />
+            <BookCard key={book.id} book={book} isAdmin={isAdmin} />
           ))}
         </div>
       )}

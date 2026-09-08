@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { prisma } from "@/lib/prisma";
 import { CustomRequestStatusSelect } from "@/components/admin/custom-request-status-select";
 
@@ -22,6 +23,21 @@ export default async function AdminCustomRequestsPage() {
               <CustomRequestStatusSelect id={req.id} status={req.status} />
             </div>
             <p className="mt-2 text-sm text-muted-foreground">{req.personalization}</p>
+            {req.referenceImages.length > 0 && (
+              <div className="mt-3 flex flex-wrap gap-2">
+                {req.referenceImages.map((src, i) => (
+                  <a
+                    key={i}
+                    href={src}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="relative size-16 overflow-hidden rounded-xl border border-border bg-muted"
+                  >
+                    <Image src={src} alt={`Referencia ${i + 1}`} fill className="object-cover" />
+                  </a>
+                ))}
+              </div>
+            )}
           </div>
         ))}
 

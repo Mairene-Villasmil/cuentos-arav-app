@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { createBook, updateBook } from "@/actions/admin";
+import { ImageUploader } from "@/components/shared/image-uploader";
 
 function slugify(value: string) {
   return value
@@ -19,7 +20,7 @@ function slugify(value: string) {
     .replace(/(^-|-$)/g, "");
 }
 
-export function BookForm({ book }: { book?: Book }) {
+export function BookForm({ book, onSaved }: { book?: Book; onSaved?: () => void }) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
   const isEdit = !!book;
@@ -57,6 +58,7 @@ export function BookForm({ book }: { book?: Book }) {
       if (isEdit) {
         await updateBook(book!.id, data);
         toast.success("Libro actualizado");
+        onSaved?.();
       } else {
         await createBook(data);
         toast.success("Libro creado");
@@ -124,25 +126,13 @@ export function BookForm({ book }: { book?: Book }) {
           className="mt-1"
         />
       </div>
-      <div>
-        <Label htmlFor="coverImage">URL de portada</Label>
-        <Input
-          id="coverImage"
-          name="coverImage"
-          placeholder="/book-placeholder.svg"
-          defaultValue={book?.coverImage ?? ""}
-          className="mt-1"
-        />
-      </div>
-      <div>
-        <Label htmlFor="previewImages">URLs de preview (separadas por coma)</Label>
-        <Input
-          id="previewImages"
-          name="previewImages"
-          defaultValue={book?.previewImages?.join(", ") ?? ""}
-          className="mt-1"
-        />
-      </div>
+      <ImageUploader name="coverImage" label="Portada" defaultValue={book?.coverImage} />
+      <ImageUploader
+        name="previewImages"
+        label="Imágenes de preview"
+        defaultValue={book?.previewImages}
+        multiple
+      />
 
       <div className="flex flex-wrap gap-4 sm:col-span-2">
         <label className="flex items-center gap-2 text-sm">

@@ -9,12 +9,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useCartStore } from "@/lib/cart-store";
 import { formatPrice } from "@/lib/format";
+import { ImageUploader } from "@/components/shared/image-uploader";
 
 export function AddToCartForm({ book }: { book: Book }) {
   const [type, setType] = useState<"standard" | "custom">(
     book.standardEnabled ? "standard" : "custom"
   );
   const [customDraft, setCustomDraft] = useState("");
+  const [referenceImages, setReferenceImages] = useState<string[]>([]);
   const addItem = useCartStore((s) => s.addItem);
   const router = useRouter();
 
@@ -36,6 +38,7 @@ export function AddToCartForm({ book }: { book: Book }) {
       quantity: 1,
       unitPrice: price,
       customDraft: type === "custom" ? customDraft : undefined,
+      referenceImages: type === "custom" ? referenceImages : undefined,
     });
 
     toast.success("Agregado al carrito");
@@ -81,6 +84,14 @@ export function AddToCartForm({ book }: { book: Book }) {
           <p className="mt-1 text-xs text-muted-foreground">
             Este monto es una seña. Coordinamos el resto por contacto directo.
           </p>
+
+          <div className="mt-4">
+            <ImageUploader
+              label="Fotos de referencia (opcional)"
+              multiple
+              onChange={setReferenceImages}
+            />
+          </div>
         </div>
       )}
 

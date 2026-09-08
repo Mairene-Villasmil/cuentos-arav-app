@@ -89,6 +89,7 @@ model OrderItem {
   quantity           Int
   unitPriceSnapshot  Int
   customDraft        String?
+  referenceImages    String[]
 }
 
 model CustomRequest {
@@ -101,6 +102,7 @@ model CustomRequest {
   user           User                @relation(fields: [userId], references: [id])
   depositPaid    Int
   personalization String
+  referenceImages String[]
   status         CustomRequestStatus @default(nuevo)
   etaMin         DateTime?
   etaMax         DateTime?

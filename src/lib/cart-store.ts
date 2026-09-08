@@ -10,6 +10,7 @@ export type CartItem = {
   quantity: number;
   unitPrice: number;
   customDraft?: string;
+  referenceImages?: string[];
 };
 
 type CartState = {

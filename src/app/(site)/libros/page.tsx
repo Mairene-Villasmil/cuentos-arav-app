@@ -1,3 +1,4 @@
+import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import type { Prisma } from "@prisma/client";
 import { BookCard } from "@/components/site/book-card";
@@ -9,6 +10,8 @@ export default async function CatalogPage({
   searchParams: Promise<{ coleccion?: string; edad?: string; tipo?: string }>;
 }) {
   const { coleccion, edad, tipo } = await searchParams;
+  const session = await auth();
+  const isAdmin = session?.user.role === "admin";
 
   const where: Prisma.BookWhereInput = {};
   if (coleccion) where.collection = coleccion;
@@ -60,7 +63,7 @@ export default async function CatalogPage({
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
           {books.map((book) => (
-            <BookCard key={book.id} book={book} />
+            <BookCard key={book.id} book={book} isAdmin={isAdmin} />
           ))}
         </div>
       )}

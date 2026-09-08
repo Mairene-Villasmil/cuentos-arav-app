@@ -1,10 +1,14 @@
 import Link from "next/link";
+import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { Button } from "@/components/ui/button";
 import { BookCard } from "@/components/site/book-card";
 import { Sparkles, Palette, Truck } from "lucide-react";
 
 export default async function HomePage() {
+  const session = await auth();
+  const isAdmin = session?.user.role === "admin";
+
   const [featured, collections] = await Promise.all([
     prisma.book.findMany({ orderBy: { createdAt: "desc" }, take: 4 }),
     prisma.book.findMany({
@@ -85,7 +89,7 @@ export default async function HomePage() {
           </div>
           <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
             {featured.map((book) => (
-              <BookCard key={book.id} book={book} />
+              <BookCard key={book.id} book={book} isAdmin={isAdmin} />
             ))}
           </div>
         </section>

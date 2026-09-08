@@ -10,6 +10,7 @@ type CartItemInput = {
   quantity: number;
   unitPrice: number;
   customDraft?: string;
+  referenceImages?: string[];
 };
 
 export async function createOrder(items: CartItemInput[]) {
@@ -34,6 +35,7 @@ export async function createOrder(items: CartItemInput[]) {
           quantity: i.quantity,
           unitPriceSnapshot: i.unitPrice,
           customDraft: i.customDraft,
+          referenceImages: i.referenceImages ?? [],
         })),
       },
     },
@@ -49,6 +51,7 @@ export async function createOrder(items: CartItemInput[]) {
         userId: session.user.id,
         depositPaid: i.unitPrice,
         personalization: i.customDraft ?? "",
+        referenceImages: i.referenceImages ?? [],
       })),
     });
   }

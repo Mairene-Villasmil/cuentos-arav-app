@@ -1,3 +1,4 @@
+import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { BookCard } from "@/components/site/book-card";
 import Link from "next/link";
@@ -8,6 +9,8 @@ export default async function CollectionsPage({
   searchParams: Promise<{ nombre?: string }>;
 }) {
   const { nombre } = await searchParams;
+  const session = await auth();
+  const isAdmin = session?.user.role === "admin";
 
   if (nombre) {
     const books = await prisma.book.findMany({
@@ -23,7 +26,7 @@ export default async function CollectionsPage({
         <h1 className="mt-3 font-heading text-3xl font-semibold sm:text-4xl">{nombre}</h1>
         <div className="mt-8 grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
           {books.map((book) => (
-            <BookCard key={book.id} book={book} />
+            <BookCard key={book.id} book={book} isAdmin={isAdmin} />
           ))}
         </div>
       </div>

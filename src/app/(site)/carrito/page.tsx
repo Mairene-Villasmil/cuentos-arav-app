@@ -30,6 +30,7 @@ export default function CartPage() {
         quantity: i.quantity,
         unitPrice: i.unitPrice,
         customDraft: i.customDraft,
+        referenceImages: i.referenceImages,
       }))
     );
     setSubmitting(false);
