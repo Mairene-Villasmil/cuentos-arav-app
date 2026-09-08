@@ -17,6 +17,7 @@ export default async function AdminSettingsPage() {
           id={settings.id}
           customDepositDefault={settings.customDepositDefault}
           supportEmail={settings.supportEmail}
+          mercadoPagoFeePercent={settings.mercadoPagoFeePercent}
         />
       </div>
     </div>

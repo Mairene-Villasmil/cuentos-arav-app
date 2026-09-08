@@ -12,6 +12,12 @@ async function requireAdmin() {
   return session;
 }
 
+export async function getMercadoPagoFeePercent() {
+  await requireAdmin();
+  const settings = await prisma.storeSettings.findFirst();
+  return settings?.mercadoPagoFeePercent ?? 6;
+}
+
 export type BookFormInput = {
   title: string;
   slug: string;
@@ -127,6 +133,7 @@ export async function updateStoreSettings(data: {
   id: string;
   customDepositDefault: number;
   supportEmail: string;
+  mercadoPagoFeePercent: number;
 }) {
   await requireAdmin();
   await prisma.storeSettings.update({
@@ -134,7 +141,9 @@ export async function updateStoreSettings(data: {
     data: {
       customDepositDefault: data.customDepositDefault,
       supportEmail: data.supportEmail,
+      mercadoPagoFeePercent: data.mercadoPagoFeePercent,
     },
   });
   revalidatePath("/admin/configuracion");
+  revalidatePath("/admin/libros");
 }

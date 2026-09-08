@@ -129,7 +129,8 @@ model ContactMessage {
 }
 
 model StoreSettings {
-  id                   String  @id @default(cuid())
-  customDepositDefault Int     @default(5000)
-  supportEmail         String
+  id                     String  @id @default(cuid())
+  customDepositDefault   Int     @default(5000)
+  supportEmail           String
+  mercadoPagoFeePercent  Float   @default(6.0)
 }

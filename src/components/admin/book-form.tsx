@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import type { Book } from "@prisma/client";
@@ -8,8 +8,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { createBook, updateBook } from "@/actions/admin";
+import { createBook, updateBook, getMercadoPagoFeePercent } from "@/actions/admin";
 import { ImageUploader } from "@/components/shared/image-uploader";
+import { formatPrice } from "@/lib/format";
 
 function slugify(value: string) {
   return value
@@ -20,10 +21,28 @@ function slugify(value: string) {
     .replace(/(^-|-$)/g, "");
 }
 
+function NetPriceHint({ price, feePercent }: { price: number; feePercent: number | null }) {
+  if (feePercent === null || !price) return null;
+  const net = price * (1 - feePercent / 100);
+  return (
+    <p className="mt-1 text-xs text-muted-foreground">
+      Te quedarían aprox. {formatPrice(net)} después de la comisión de Mercado Pago ({feePercent}%).
+    </p>
+  );
+}
+
 export function BookForm({ book, onSaved }: { book?: Book; onSaved?: () => void }) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
   const isEdit = !!book;
+
+  const [feePercent, setFeePercent] = useState<number | null>(null);
+  const [standardPrice, setStandardPrice] = useState(book?.standardPrice ?? 0);
+  const [depositPrice, setDepositPrice] = useState(book?.customDepositOverride ?? 0);
+
+  useEffect(() => {
+    getMercadoPagoFeePercent().then(setFeePercent).catch(() => setFeePercent(null));
+  }, []);
 
   async function handleSubmit(formData: FormData) {
     setPending(true);
@@ -112,9 +131,11 @@ export function BookForm({ book, onSaved }: { book?: Book; onSaved?: () => void 
           id="standardPrice"
           name="standardPrice"
           type="number"
-          defaultValue={book?.standardPrice ?? ""}
+          value={standardPrice || ""}
+          onChange={(e) => setStandardPrice(Number(e.target.value))}
           className="mt-1"
         />
+        <NetPriceHint price={standardPrice} feePercent={feePercent} />
       </div>
       <div>
         <Label htmlFor="customDepositOverride">Seña personalizado</Label>
@@ -122,9 +143,11 @@ export function BookForm({ book, onSaved }: { book?: Book; onSaved?: () => void 
           id="customDepositOverride"
           name="customDepositOverride"
           type="number"
-          defaultValue={book?.customDepositOverride ?? ""}
+          value={depositPrice || ""}
+          onChange={(e) => setDepositPrice(Number(e.target.value))}
           className="mt-1"
         />
+        <NetPriceHint price={depositPrice} feePercent={feePercent} />
       </div>
       <ImageUploader name="coverImage" label="Portada" defaultValue={book?.coverImage} />
       <ImageUploader
